@@ -2,18 +2,20 @@
 
 
 
-
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:state_notifier/state_notifier.dart';
 import 'package:todo_app/todo.dart';
 import 'package:uuid/uuid.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'todos_state.freezed.dart';
 
+
+
 @freezed
-abstract class TodosState with _$TodosState {//TodosStateのクラスをチェック
-  const factory TodosState({
+abstract class TodosState with _$TodosState {
+  const factory TodosState({//TodosStateのクラスをチェック
     @Default(<Todo>[]) List<Todo> todos,//すべてのTodoが入るtodos
   }) = TodosStateData;//TodosStateDataであればデータの読み込みが終わったという判断ができるように
   const factory TodosState.loading() = TodosStateLoading;//TodosStateLoadingであればまだ読み込み中
@@ -26,10 +28,10 @@ class TodosController extends StateNotifier<TodosState> with LocatorMixin {//Loc
   final _uuid = Uuid();
 
   @override
-  void initState() async {//initStateで5秒間ウエイトを入れ,初期データとしていくつかのTodoをstateへ設定
+  void initState() async {
     super.initState();
 
-    await Future<void>.delayed(const Duration(seconds: 3));
+    await Future<void>.delayed(const Duration(seconds: 3));//initStateで3秒間ウエイトを入れ,初期データとしていくつかのTodoをstateへ設定
 
     // 初期データを設定、TodosStateLoadingからTodoStateDataへ変わるのでローディング完了の状態となる
     state = TodosState(
@@ -42,14 +44,14 @@ class TodosController extends StateNotifier<TodosState> with LocatorMixin {//Loc
   }
 
   void add(String title) {//追加機能
-    final currentState = state;//stateは不変なので更新する場合は現在のstateからcopywithでコピーするか、新規のstateで上書きする。
+    final currentState = state;//
     if (currentState is TodosStateData) {
       // todosのクローンに新しいTodoを追加してstateを更新
       final todos = currentState.todos.toList()
         ..add(
           Todo(id: _uuid.v4(), title: title),
         );
-      state = currentState.copyWith(
+      state = currentState.copyWith(//stateはimmutableでメンバ変数を直接変更することはできないので、stateを更新するときは現在のstateからcopyWithでコピーするか、新規のstateで上書きする
         todos: todos,
       );
     }
