@@ -1,7 +1,6 @@
 
 
 
-
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:state_notifier/state_notifier.dart';
@@ -36,13 +35,11 @@ class TodosController extends StateNotifier<TodosState> with LocatorMixin  {
 
     var prefs = await SharedPreferences.getInstance();
     state = TodosState(
-    todos: [
-      Todo(id: _uuid.v4(), title: 'テスト'),
-      Todo(id: prefs.getString('_uuid.v4()') , title: prefs.getString('title') ),
-      Todo(id: prefs.getString('_uuid.v4()') , title: prefs.getString('title') ),
-      Todo(id: prefs.getString('_uuid.v4()') , title: prefs.getString('title') ),
-    ],
-      );
+      todos: [
+        Todo(id: _uuid.v4(), title: 'テスト'),
+        Todo(id: prefs.getString('_uuid.v4()') , title: prefs.getString('title') ),
+      ],
+    );
   }
 
   void add(String title) async {//追加機能
@@ -51,11 +48,9 @@ class TodosController extends StateNotifier<TodosState> with LocatorMixin  {
     if (currentState is TodosStateData) {
       // todosのクローンに新しいTodoを追加してstateを更新
       final todos = currentState.todos.toList()
-    ..add(
+        ..add(
           Todo(id: _uuid.v4(), title: title),
-    );
-      prefs.setString('id',_uuid.v4());
-      prefs.setString('title',title) ;
+        );
       prefs.setString('id',_uuid.v4());
       prefs.setString('title',title) ;
       state = currentState.copyWith(//stateはimmutableでメンバ変数を直接変更することはできないので、stateを更新するときは現在のstateからcopyWithでコピーするか、新規のstateで上書きする
@@ -64,8 +59,6 @@ class TodosController extends StateNotifier<TodosState> with LocatorMixin  {
 
     }
   }
-
-
 
   void toggle(Todo todo) {
     final currentState = state;
